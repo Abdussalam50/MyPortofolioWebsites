@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Abdussalam Aswin Hadist — Full Stack Developer</title>
+  <meta name="description" content="Abdussalam Aswin Hadist — Full Stack Developer specializing in PHP, Laravel, React, and PostgreSQL." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: '#7b2fff',
+            secondary: '#00d4ff',
+            accent: '#ff2d87',
+            dark: {
+              DEFAULT: '#0a0b10',
+              card: '#151921',
+            }
+          },
+          fontFamily: {
+            inter: ['Inter', 'sans-serif'],
+            fira: ['Fira Code', 'monospace'],
+          },
+          animation: {
+            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+          }
+        }
+      }
+    }
+  </script>
+  <style type="text/tailwindcss">
+    @layer base {
+      body { @apply bg-dark text-gray-200 font-inter scroll-smooth overflow-x-hidden; }
+      .gradient-text { @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary font-black; }
+    }
+    @layer components {
+      .btn-primary { @apply px-7 py-3.5 bg-gradient-to-br from-primary to-[#5a1ecf] text-white rounded-xl font-semibold flex items-center gap-2.5 shadow-lg shadow-primary/40 hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/50 transition-all duration-300; }
+      .btn-secondary { @apply px-7 py-3.5 bg-white/5 border border-white/10 text-white rounded-xl font-semibold flex items-center gap-2.5 backdrop-blur-md hover:bg-white/10 hover:-translate-y-1 transition-all duration-300; }
+      .glass-card { @apply bg-dark-card border border-white/5 rounded-2xl p-8 backdrop-blur-sm transition-all duration-300; }
+      .section-padding { @apply py-24; }
+    }
+    /* Custom non-Tailwind animations */
+    .typing-cursor { @apply animate-[blink_1s_infinite]; }
+    @keyframes blink { 50% { opacity: 0; } }
+    .reveal { @apply opacity-0 translate-y-8 transition-all duration-700 ease-out; }
+    .reveal.active { @apply opacity-100 translate-y-0; }
+    .profile-blob { @apply bg-gradient-to-br from-dark-card to-[#1a1f2e] shadow-2xl animate-[blob_8s_infinite_alternate]; }
+    @keyframes blob {
+      0% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+      100% { border-radius: 50% 50% 20% 80% / 50% 80% 20% 50%; }
+    }
+    /* Video Modal Styles */
+    #videoModal { @apply fixed inset-0 z-[2000] flex items-center justify-center p-4 opacity-0 invisible transition-all duration-300; }
+    #videoModal.active { @apply opacity-100 visible; }
+    #videoModal .modal-overlay { @apply absolute inset-0 bg-dark/90 backdrop-blur-md; }
+    #videoModal .modal-content { @apply relative w-full max-w-4xl aspect-video bg-dark-card border border-white/10 rounded-2xl overflow-hidden shadow-2xl scale-95 opacity-0 transition-all duration-500 delay-100; }
+    #videoModal.active .modal-content { @apply scale-100 opacity-100; }
+    #videoModal .close-modal { @apply absolute -top-12 right-0 text-white text-3xl hover:text-primary transition-colors cursor-pointer; }
+
+    /* CV Modal Styles */
+    #cvModal { @apply fixed inset-0 z-[2000] flex items-center justify-center p-4 opacity-0 invisible transition-all duration-300; }
+    #cvModal.active { @apply opacity-100 visible; }
+    #cvModal .modal-overlay { @apply absolute inset-0 bg-dark/90 backdrop-blur-md; }
+    #cvModal .modal-content { @apply relative w-full max-w-md bg-dark-card border border-white/10 rounded-2xl p-8 shadow-2xl scale-95 opacity-0 transition-all duration-500; }
+    #cvModal.active .modal-content { @apply scale-100 opacity-100; }
+  </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body class="dark">
+  <div class="scroll-progress" id="scrollProgress"></div>
+
+  <nav id="navbar" class="fixed top-0 left-0 w-full h-20 bg-dark/80 backdrop-blur-xl border-b border-white/5 z-[1000] transition-all duration-300">
+    <div class="max-w-7xl mx-auto h-full px-6 flex justify-between items-center">
+      <a href="#home" class="font-fira text-2xl font-bold text-white">&lt;<span class="text-primary">Abdussalam Aswin Hadist</span> /&gt;</a>
+      <ul id="navLinks" class="hidden md:flex gap-8 text-gray-400 font-medium transition-all duration-500">
+        <li><a href="#home" class="hover:text-primary transition-colors">Home</a></li>
+        <li><a href="#about" class="hover:text-primary transition-colors">About</a></li>
+        <li><a href="#skills" class="hover:text-primary transition-colors">Skills</a></li>
+        <li><a href="#projects" class="hover:text-primary transition-colors">Projects</a></li>
+        <li><a href="#experience" class="hover:text-primary transition-colors">Experience</a></li>
+        <li><a href="#contact" class="hover:text-primary transition-colors">Contact</a></li>
+      </ul>
+      <div class="flex items-center gap-5">
+        <button id="themeToggle" class="text-xl text-gray-400 hover:text-primary"><i class="fas fa-moon"></i></button>
+        <a href="#contact" class="hidden sm:block px-5 py-2.5 bg-gradient-to-r from-secondary to-[#00a8cc] text-dark font-bold rounded-lg text-sm">Hire Me</a>
+        <button id="hamburger" class="md:hidden flex flex-col gap-1.5">
+          <span class="w-6 h-0.5 bg-white transition-all"></span>
+          <span class="w-6 h-0.5 bg-white transition-all"></span>
+          <span class="w-6 h-0.5 bg-white transition-all"></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <section class="relative min-h-screen flex items-center justify-between px-6 py-32 max-w-7xl mx-auto overflow-hidden" id="home">
+    <canvas id="particlesCanvas" class="absolute top-0 left-0 w-full h-full -z-10 pointer-events-none"></canvas>
+    <div class="flex-1 max-w-2xl">
+      <div class="inline-flex items-center gap-2 px-4 py-2 bg-secondary/10 border border-secondary/20 rounded-full text-secondary text-sm font-semibold mb-6">
+        <span class="w-2 h-2 bg-secondary rounded-full animate-pulse"></span> Available for work
+      </div>
+      <h1 class="text-5xl md:text-7xl font-black leading-[1.1] mb-4">Hi, I'm <span class="gradient-text">Abdussalam Aswin Hadist</span></h1>
+      <div class="text-xl md:text-3xl text-gray-400 font-medium mb-6 min-h-[1.2em]">
+        I'm a <span id="typingText" class="text-white font-bold"></span><span class="typing-cursor text-primary">|</span>
+      </div>
+      <p class="text-lg text-gray-400 mb-10 max-w-md leading-relaxed">Passionate full-stack developer crafting scalable web applications with clean code and modern technologies. Turning complex ideas into elegant digital solutions.</p>
+      <div class="flex flex-wrap gap-5 mb-10">
+        <a href="#projects" class="btn-primary"><i class="fas fa-code"></i> View Projects</a>
+        <button id="downloadCvBtn" class="btn-secondary"><i class="fas fa-download"></i> Download CV</button>
+      </div>
+      <div class="flex gap-4">
+        <a href="https://github.com/Abdussalam50?tab=repositories" class="w-11 h-11 flex items-center justify-center bg-white/5 border border-white/10 rounded-full text-xl text-gray-400 hover:text-primary hover:border-primary hover:-translate-y-1 transition-all"><i class="fab fa-github"></i></a>
+        <a href="https://www.linkedin.com/in/abdussalam-hadist-02067b287" class="w-11 h-11 flex items-center justify-center bg-white/5 border border-white/10 rounded-full text-xl text-gray-400 hover:text-primary hover:border-primary hover:-translate-y-1 transition-all"><i class="fab fa-linkedin"></i></a>
+        <a href="https://www.instagram.com/abdussalam_hadist/" class="w-11 h-11 flex items-center justify-center bg-white/5 border border-white/10 rounded-full text-xl text-gray-400 hover:text-primary hover:border-primary hover:-translate-y-1 transition-all"><i class="fab fa-instagram"></i></a>
+        <a href="mailto:abdussalamhadist50.email@gmail.com" class="w-11 h-11 flex items-center justify-center bg-white/5 border border-white/10 rounded-full text-xl text-gray-400 hover:text-primary hover:border-primary hover:-translate-y-1 transition-all"><i class="fas fa-envelope"></i></a>
+      </div>
+    </div>
+    <div class="flex-1 hidden lg:flex justify-end relative">
+      <div class="relative w-[400px] h-[400px] z-10">
+        <div class="profile-blob w-full h-full overflow-hidden">
+          <img src="img/profile2.jpeg" alt="Abdussalam Aswin Hadist" class="w-full h-full object-cover">
+        </div>
+        <!-- Decorative Rings -->
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] border border-white/5 rounded-full -z-10 animate-[spin_20s_linear_infinite]"></div>
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[140%] h-[140%] border border-dashed border-white/5 rounded-full -z-10 animate-[spin_30s_linear_infinite_reverse]"></div>
+        
+        <!-- Floating Badges -->
+        <div class="absolute top-[10%] left-0 px-4 py-2.5 bg-dark-card border border-white/10 rounded-xl text-sm font-semibold flex items-center gap-2 shadow-xl animate-bounce text-[#ff2d20]"><i class="fab fa-laravel"></i> Laravel</div>
+        <div class="absolute top-[60%] -left-[10%] px-4 py-2.5 bg-dark-card border border-white/10 rounded-xl text-sm font-semibold flex items-center gap-2 shadow-xl animate-bounce [animation-delay:1s] text-[#61dafb]"><i class="fab fa-react"></i> React</div>
+        <div class="absolute top-0 right-[10%] px-4 py-2.5 bg-dark-card border border-white/10 rounded-xl text-sm font-semibold flex items-center gap-2 shadow-xl animate-bounce [animation-delay:2s] text-[#00758f]"><i class="fas fa-database"></i> MySQL</div>
+        <div class="absolute bottom-[10%] right-0 px-4 py-2.5 bg-dark-card border border-white/10 rounded-xl text-sm font-semibold flex items-center gap-2 shadow-xl animate-bounce [animation-delay:3s] text-[#2496ed]"><i class="fab fa-docker"></i> Docker</div>
+      </div>
+    </div>
+    <div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2">
+      <div class="w-6 h-10 border-2 border-white/20 rounded-full flex justify-center p-1">
+        <div class="w-1.5 h-1.5 bg-primary rounded-full animate-bounce"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-24" id="about">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center mb-16">
+        <span class="inline-block px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-primary text-sm font-semibold mb-4">About Me</span>
+        <h2 class="text-4xl md:text-5xl font-black mb-4 text-white">Who I Am</h2>
+      </div>
+      <div class="grid grid-cols-1 lg:grid-cols-[1.2fr_0.8fr] gap-16 items-center">
+        <div class="reveal space-y-6">
+          <p class="text-lg text-gray-400">I'm a <strong class="text-white">Full Stack Developer</strong> with a passion for building high-quality web applications. I specialize in robust backend systems with <strong class="text-white">PHP or Laravel</strong> and beautiful frontends with <strong class="text-white">React and Tailwind CSS. I also expert in build frontend with Bootstrap</strong>.</p>
+          <p class="text-lg text-gray-400">My personal experience includes designing RESTful APIs, implementing payment gateways like <strong class="text-white">Midtrans</strong>, building JWT authentication systems, and deploying containerized apps with <strong class="text-white">Docker</strong>.</p>
+          <p class="text-lg text-gray-400">I love turning complex problems into elegant, scalable solutions. Always learning, always building.</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-4">
+            <div class="flex items-center gap-3 text-gray-200"><i class="fas fa-map-marker-alt text-primary"></i><span>Indonesia</span></div>
+            <div class="flex items-center gap-3 text-gray-200"><i class="fas fa-envelope text-primary"></i><span>abdussalamhadist50@gmail.com</span></div>
+            <div class="flex items-center gap-3 text-gray-200"><i class="fas fa-briefcase text-primary"></i><span>Open to Work</span></div>
+            <div class="flex items-center gap-3 text-gray-200"><i class="fas fa-language text-primary"></i><span>ID & EN</span></div>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-5 reveal">
+          <div class="glass-card text-center">
+            <div class="stat-number text-4xl font-extrabold text-primary mb-1" data-target="2">2</div>
+            <div class="text-xs text-gray-500 uppercase tracking-widest font-bold">Years Exp</div>
+          </div>
+          <div class="glass-card text-center">
+            <div class="stat-number text-4xl font-extrabold text-primary mb-1" data-target="60">60</div>
+            <div class="text-xs text-gray-500 uppercase tracking-widest font-bold">Projects</div>
+          </div>
+          <div class="glass-card text-center">
+            <div class="stat-number text-4xl font-extrabold text-primary mb-1" data-target="10">10</div>
+            <div class="text-xs text-gray-500 uppercase tracking-widest font-bold">Techs</div>
+          </div>
+          <div class="glass-card text-center">
+            <div class="stat-number text-4xl font-extrabold text-primary mb-1" data-target="100">100</div>
+            <div class="text-xs text-gray-500 uppercase tracking-widest font-bold">% Committed</div>
+          </div>
+        </div>
+      </div>
+      <div class="mt-20 reveal">
+        <h3 class="text-xl font-bold mb-8 text-center text-white">Tech Stack</h3>
+        <div class="flex flex-wrap justify-center gap-3">
+          <span class="px-5 py-2.5 bg-white/5 border border-white/5 rounded-lg flex items-center gap-3 hover:border-primary hover:text-primary transition-all duration-300"><i class="fab fa-laravel text-[#ff2d20]"></i> Laravel</span>
+          <span class="px-5 py-2.5 bg-white/5 border border-white/5 rounded-lg flex items-center gap-3 hover:border-primary hover:text-primary transition-all duration-300"><i class="fab fa-react text-[#61dafb]"></i> React</span>
+          <span class="px-5 py-2.5 bg-white/5 border border-white/5 rounded-lg flex items-center gap-3 hover:border-primary hover:text-primary transition-all duration-300"><i class="fab fa-js text-[#f7df1e]"></i> JavaScript</span>
+          <span class="px-5 py-2.5 bg-white/5 border border-white/5 rounded-lg flex items-center gap-3 hover:border-primary hover:text-primary transition-all duration-300"><i class="fab fa-php text-[#777bb4]"></i> PHP</span>
+          <span class="px-5 py-2.5 bg-white/5 border border-white/5 rounded-lg flex items-center gap-3 hover:border-primary hover:text-primary transition-all duration-300"><i class="fas fa-database text-[#00758f]"></i> MySQL</span>
+          <span class="px-5 py-2.5 bg-white/5 border border-white/5 rounded-lg flex items-center gap-3 hover:border-primary hover:text-primary transition-all duration-300"><i class="fas fa-database text-[#00758f]"></i> PostgreeSQL</span>
+          <span class="px-5 py-2.5 bg-white/5 border border-white/5 rounded-lg flex items-center gap-3 hover:border-primary hover:text-primary transition-all duration-300"><i class="fab fa-node-js text-[#339933]"></i> Python</span>
+          <span class="px-5 py-2.5 bg-white/5 border border-white/5 rounded-lg flex items-center gap-3 hover:border-primary hover:text-primary transition-all duration-300"><i class="fab fa-docker text-[#2496ed]"></i> Docker</span>
+          <span class="px-5 py-2.5 bg-white/5 border border-white/5 rounded-lg flex items-center gap-3 hover:border-primary hover:text-primary transition-all duration-300"><i class="fab fa-css3-alt text-[#38bdf8]"></i> Tailwind</span>
+          <span class="px-5 py-2.5 bg-white/5 border border-white/5 rounded-lg flex items-center gap-3 hover:border-primary hover:text-primary transition-all duration-300"><i class="fab fa-bootstrap text-[#38bdf8]"></i> Bootstrap</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-24 bg-white/[0.01]" id="skills">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center mb-16">
+        <span class="inline-block px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-primary text-sm font-semibold mb-4">My Skills</span>
+        <h2 class="text-4xl md:text-5xl font-black text-white">What I Can Do</h2>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Frontend -->
+        <div class="glass-card reveal">
+          <div class="flex items-center gap-4 mb-8">
+            <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-2xl text-primary"><i class="fas fa-palette"></i></div>
+            <h3 class="text-xl font-bold text-white">Frontend</h3>
+          </div>
+          <div class="space-y-6">
+            <div>
+              <div class="flex justify-between mb-2 font-bold text-sm text-gray-300"><span>React.js</span><span>85%</span></div>
+              <div class="h-2 bg-white/5 rounded-full overflow-hidden"><div class="skill-fill h-full bg-gradient-to-r from-primary to-secondary transition-all duration-[1.5s]" data-w="85"></div></div>
+            </div>
+            <div>
+              <div class="flex justify-between mb-2 font-bold text-sm text-gray-300"><span>Bootstrap</span><span>80%</span></div>
+              <div class="h-2 bg-white/5 rounded-full overflow-hidden"><div class="skill-fill h-full bg-gradient-to-r from-primary to-secondary transition-all duration-[1.5s]" data-w="80"></div></div>
+            </div>
+            <div>
+              <div class="flex justify-between mb-2 font-bold text-sm text-gray-300"><span>JavaScript</span><span>88%</span></div>
+              <div class="h-2 bg-white/5 rounded-full overflow-hidden"><div class="skill-fill h-full bg-gradient-to-r from-primary to-secondary transition-all duration-[1.5s]" data-w="88"></div></div>
+            </div>
+            <div>
+              <div class="flex justify-between mb-2 font-bold text-sm text-gray-300"><span>Tailwind CSS</span><span>90%</span></div>
+              <div class="h-2 bg-white/5 rounded-full overflow-hidden"><div class="skill-fill h-full bg-gradient-to-r from-primary to-secondary transition-all duration-[1.5s]" data-w="90"></div></div>
+            </div>
+          </div>
+        </div>
+        <!-- Backend -->
+        <div class="glass-card reveal">
+          <div class="flex items-center gap-4 mb-8">
+            <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-2xl text-primary"><i class="fas fa-server"></i></div>
+            <h3 class="text-xl font-bold text-white">Backend</h3>
+          </div>
+          <div class="space-y-6">
+            <div>
+              <div class="flex justify-between mb-2 font-bold text-sm text-gray-300"><span>Laravel</span><span>90%</span></div>
+              <div class="h-2 bg-white/5 rounded-full overflow-hidden"><div class="skill-fill h-full bg-gradient-to-r from-primary to-secondary transition-all duration-[1.5s]" data-w="90"></div></div>
+            </div>
+            <div>
+              <div class="flex justify-between mb-2 font-bold text-sm text-gray-300"><span>RESTful API</span><span>88%</span></div>
+              <div class="h-2 bg-white/5 rounded-full overflow-hidden"><div class="skill-fill h-full bg-gradient-to-r from-primary to-secondary transition-all duration-[1.5s]" data-w="88"></div></div>
+            </div>
+            <div>
+              <div class="flex justify-between mb-2 font-bold text-sm text-gray-300"><span>MySQL</span><span>85%</span></div>
+              <div class="h-2 bg-white/5 rounded-full overflow-hidden"><div class="skill-fill h-full bg-gradient-to-r from-primary to-secondary transition-all duration-[1.5s]" data-w="85"></div></div>
+            </div>
+            <div>
+              <div class="flex justify-between mb-2 font-bold text-sm text-gray-300"><span>PostgreeSQL</span><span>85%</span></div>
+              <div class="h-2 bg-white/5 rounded-full overflow-hidden"><div class="skill-fill h-full bg-gradient-to-r from-primary to-secondary transition-all duration-[1.5s]" data-w="85"></div></div>
+            </div>
+            <div>
+              <div class="flex justify-between mb-2 font-bold text-sm text-gray-300"><span>Python</span><span>70%</span></div>
+              <div class="h-2 bg-white/5 rounded-full overflow-hidden"><div class="skill-fill h-full bg-gradient-to-r from-primary to-secondary transition-all duration-[1.5s]" data-w="70"></div></div>
+            </div>
+          </div>
+        </div>
+        <!-- Tools -->
+        <div class="glass-card reveal">
+          <div class="flex items-center gap-4 mb-8">
+            <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-2xl text-primary"><i class="fas fa-tools"></i></div>
+            <h3 class="text-xl font-bold text-white">DevOps</h3>
+          </div>
+          <div class="space-y-6">
+            <div>
+              <div class="flex justify-between mb-2 font-bold text-sm text-gray-300"><span>Docker</span><span>75%</span></div>
+              <div class="h-2 bg-white/5 rounded-full overflow-hidden"><div class="skill-fill h-full bg-gradient-to-r from-primary to-secondary transition-all duration-[1.5s]" data-w="75"></div></div>
+            </div>
+            <div>
+              <div class="flex justify-between mb-2 font-bold text-sm text-gray-300"><span>Git / GitHub</span><span>90%</span></div>
+              <div class="h-2 bg-white/5 rounded-full overflow-hidden"><div class="skill-fill h-full bg-gradient-to-r from-primary to-secondary transition-all duration-[1.5s]" data-w="90"></div></div>
+            </div>
+            <div>
+              <div class="flex justify-between mb-2 font-bold text-sm text-gray-300"><span>CLI</span><span>78%</span></div>
+              <div class="h-2 bg-white/5 rounded-full overflow-hidden"><div class="skill-fill h-full bg-gradient-to-r from-primary to-secondary transition-all duration-[1.5s]" data-w="78"></div></div>
+            </div>
+            <div>
+              <div class="flex justify-between mb-2 font-bold text-sm text-gray-300"><span>Postman</span><span>85%</span></div>
+              <div class="h-2 bg-white/5 rounded-full overflow-hidden"><div class="skill-fill h-full bg-gradient-to-r from-primary to-secondary transition-all duration-[1.5s]" data-w="85"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-24" id="projects">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center mb-16">
+        <span class="inline-block px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-primary text-sm font-semibold mb-4">Portfolio</span>
+        <h2 class="text-4xl md:text-5xl font-black text-white">Featured Projects</h2>
+      </div>
+      <div class="flex justify-center gap-3 mb-12 flex-wrap">
+        <button class="filter-btn active px-6 py-2 rounded-full border border-white/10 bg-white/5 text-gray-400 font-bold hover:border-primary transition-all [&.active]:bg-primary [&.active]:text-white [&.active]:border-primary" data-filter="all">All</button>
+        <button class="filter-btn px-6 py-2 rounded-full border border-white/10 bg-white/5 text-gray-400 font-bold hover:border-primary transition-all [&.active]:bg-primary [&.active]:text-white [&.active]:border-primary" data-filter="fullstack">Full Stack</button>
+        <button class="filter-btn px-6 py-2 rounded-full border border-white/10 bg-white/5 text-gray-400 font-bold hover:border-primary transition-all [&.active]:bg-primary [&.active]:text-white [&.active]:border-primary" data-filter="api">API</button>
+        <button class="filter-btn px-6 py-2 rounded-full border border-white/10 bg-white/5 text-gray-400 font-bold hover:border-primary transition-all [&.active]:bg-primary [&.active]:text-white [&.active]:border-primary" data-filter="web">Web App</button>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="projectsGrid">
+        <!-- Project Card 1 -->
+        <div class="group glass-card !p-0 overflow-hidden reveal" data-category="fullstack">
+          <div class="relative h-56 overflow-hidden">
+            <div class="w-full h-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center text-6xl text-white/50"><i class="fas fa-shopping-cart"></i></div>
+            <div class="absolute inset-0 bg-primary/90 flex items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition-all duration-300">
+              <button data-video="https://www.youtube.com/embed/-KH619_zSHg?si=d5nEsVZ_8FIuFSob" class="demo-btn px-5 py-2 bg-white text-primary rounded-lg font-bold text-sm hover:bg-primary hover:text-white transition-all"><i class="fas fa-play-circle"></i> Demo</button>
+              <a href="https://github.com/Abdussalam50/Race-To-SKD" class="px-5 py-2 bg-white text-primary rounded-lg font-bold text-sm"><i class="fab fa-github"></i> Code</a>
+            </div>
+          </div>
+          <div class="p-8">
+            <span class="text-[10px] font-black uppercase tracking-widest text-accent mb-2 block">Full Stack</span>
+            <h3 class="text-xl font-bold text-white mb-3">Race To SKD <span class="text-yellow-400">(In development)</span></h3>
+            <p class="text-sm text-gray-400 mb-6">Personal scalable business platform for preparation Indonesian Civil Servant Candidate Test. integrated with Midtrans payment gateway, featuring a robust Laravel backend and React frontend. It's also will Integrated with AI API to generate mock test questions for users.</p>
+            <div class="flex flex-wrap gap-2">
+              <span class="px-2 py-1 bg-white/5 rounded text-[10px] text-gray-400">Laravel</span>
+              <span class="px-2 py-1 bg-white/5 rounded text-[10px] text-gray-400">Python</span>
+              <span class="px-2 py-1 bg-white/5 rounded text-[10px] text-gray-400">React</span>
+              <span class="px-2 py-1 bg-white/5 rounded text-[10px] text-gray-400">MySQL</span>
+              <span class="px-2 py-1 bg-white/5 rounded text-[10px] text-gray-400">Midtrans</span>
+              <span class="px-2 py-1 bg-white/5 rounded text-[10px] text-gray-400">Gemini API</span>
+              <span class="px-2 py-1 bg-white/5 rounded text-[10px] text-gray-400">Docker</span>
+            </div>
+          </div>
+        </div>
+        <!-- Project Card 2 -->
+        <div class="group glass-card !p-0 overflow-hidden reveal" data-category="fullstack">
+          <div class="relative h-56 overflow-hidden">
+            <div class="w-full h-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center text-6xl text-white/50"><i class="fas fa-shopping-cart"></i></div>
+            <div class="absolute inset-0 bg-primary/90 flex items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition-all duration-300">
+              <button data-video="https://www.youtube.com/embed/shqZjtpv0_U?si=tHPjYzPZ2rtvEe_o" class="demo-btn px-5 py-2 bg-white text-primary rounded-lg font-bold text-sm hover:bg-primary hover:text-white transition-all"><i class="fas fa-play-circle"></i> Demo</button>
+              <a href="https://github.com/Abdussalam50/Pro2_LMS" class="px-5 py-2 bg-white text-primary rounded-lg font-bold text-sm"><i class="fab fa-github"></i> Code</a>
+            </div>
+          </div>
+          <div class="p-8">
+            <span class="text-[10px] font-black uppercase tracking-widest text-accent mb-2 block">Full Stack</span>
+            <h3 class="text-xl font-bold text-white mb-3">Pro2LMS <span class="text-yellow-400"></span></h3>
+            <p class="text-sm text-gray-400 mb-6">High End Learning Management System for Lecturer and Student with many fetures such as Absence with QR Scanner and random code, quiz, task assignments system, discussion with lecturer, student, class, and group level, Exam features, Analytical Reports, AI chatbot, AI Assistant, lecturer feedback and graph visualization with python</p>
+            <div class="flex flex-wrap gap-2">
+              <span class="px-2 py-1 bg-white/5 rounded text-[10px] text-gray-400">Laravel</span>
+              <span class="px-2 py-1 bg-white/5 rounded text-[10px] text-gray-400">Python</span>
+              <span class="px-2 py-1 bg-white/5 rounded text-[10px] text-gray-400">Livewire</span>
+              <span class="px-2 py-1 bg-white/5 rounded text-[10px] text-gray-400">Fillament</span>
+              <span class="px-2 py-1 bg-white/5 rounded text-[10px] text-gray-400">MySQL</span>
+              <span class="px-2 py-1 bg-white/5 rounded text-[10px] text-gray-400">Claude API</span>
+              <span class="px-2 py-1 bg-white/5 rounded text-[10px] text-gray-400">Docker</span>
+            </div>
+          </div>
+
+        </div>
+        <!-- Project Card 3 -->
+        <div class="group glass-card !p-0 overflow-hidden reveal" data-category="fullstack">
+          <div class="relative h-56 overflow-hidden">
+            <div class="w-full h-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center text-6xl text-white/50"><i class="fas fa-shopping-cart"></i></div>
+            <div class="absolute inset-0 bg-primary/90 flex items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition-all duration-300">
+              <button data-video="https://www.youtube.com/embed/O3P0d8PUb-M?si=kimftxLFnH9bJD_x" class="demo-btn px-5 py-2 bg-white text-primary rounded-lg font-bold text-sm hover:bg-primary hover:text-white transition-all"><i class="fas fa-play-circle"></i> Demo</button>
+              <a href="https://github.com/Abdussalam50/ViceAgent" class="px-5 py-2 bg-white text-primary rounded-lg font-bold text-sm"><i class="fab fa-github"></i> Code</a>
+            </div>
+          </div>
+          <div class="p-8">
+            <span class="text-[10px] font-black uppercase tracking-widest text-accent mb-2 block">Full Stack</span>
+            <h3 class="text-xl font-bold text-white mb-3">Vice Agent <span class="text-yellow-400"></span></h3>
+            <p class="text-sm text-gray-400 mb-6">Vice Agent is a linting apps with AI based integration To provide deep, real-time scanning of your local projects, ViceAgent requires this desktop agent. It’s lightweight, portable, and designed to run silently in the background without slowing down your workflow. </p>
+            <div class="flex flex-wrap gap-2">
+              <span class="px-2 py-1 bg-white/5 rounded text-[10px] text-gray-400">React.js</span>
+              <span class="px-2 py-1 bg-white/5 rounded text-[10px] text-gray-400">Python</span>
+              <span class="px-2 py-1 bg-white/5 rounded text-[10px] text-gray-400">Fast API</span>
+              <span class="px-2 py-1 bg-white/5 rounded text-[10px] text-gray-400">PostgreSQL/Supabase</span>
+              <span class="px-2 py-1 bg-white/5 rounded text-[10px] text-gray-400">SQLite</span>
+              <span class="px-2 py-1 bg-white/5 rounded text-[10px] text-gray-400">Gemini API</span>
+            </div>
+          </div>
+        </div>
+        <!-- Project Card 5 -->
+        <div class="group glass-card !p-0 overflow-hidden reveal" data-category="fullstack">
+          <div class="relative h-56 overflow-hidden">
+            <div class="w-full h-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center text-6xl text-white/50"><i class="fas fa-shopping-cart"></i></div>
+            <div class="absolute inset-0 bg-primary/90 flex items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition-all duration-300">
+              <button data-video="https://www.youtube.com/embed/nQAa7WSnTXM?si=dXcDy7Zp4ldkjySb" class="demo-btn px-5 py-2 bg-white text-primary rounded-lg font-bold text-sm hover:bg-primary hover:text-white transition-all"><i class="fas fa-play-circle"></i> Demo</button>
+              <a href="https://github.com/Abdussalam50/KostKito.com" class="px-5 py-2 bg-white text-primary rounded-lg font-bold text-sm"><i class="fab fa-github"></i> Code</a>
+            </div>
+          </div>
+          <div class="p-8">
+            <span class="text-[10px] font-black uppercase tracking-widest text-accent mb-2 block">Full Stack</span>
+            <h3 class="text-xl font-bold text-white mb-3">KostKito.com <span class="text-yellow-400"></span></h3>
+            <p class="text-sm text-gray-400 mb-6">A boarding house directory platform in the Jambi area that connects room seekers (students) directly
+with property owners. Features 3 user levels (admin, partner/owner, public) with search, property
+listing, and direct contact functionality.</p>
+            <div class="flex flex-wrap gap-2">
+              <span class="px-2 py-1 bg-white/5 rounded text-[10px] text-gray-400">Laravel</span>
+              <span class="px-2 py-1 bg-white/5 rounded text-[10px] text-gray-400">JavaScript</span>
+              <span class="px-2 py-1 bg-white/5 rounded text-[10px] text-gray-400">TailwindCSS</span>
+              <span class="px-2 py-1 bg-white/5 rounded text-[10px] text-gray-400">MySQL</span>
+            </div>
+          </div>
+        </div>
+        <!-- Project Card 4 -->
+        <div class="group glass-card !p-0 overflow-hidden reveal" data-category="fullstack">
+          <div class="relative h-56 overflow-hidden">
+            <div class="w-full h-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center text-6xl text-white/50"><i class="fas fa-shopping-cart"></i></div>
+            <div class="absolute inset-0 bg-primary/90 flex items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition-all duration-300">
+              <button data-video="https://www.youtube.com/embed/dQw4w9WgXcQ" class="demo-btn px-5 py-2 bg-white text-primary rounded-lg font-bold text-sm hover:bg-primary hover:text-white transition-all"><i class="fas fa-play-circle"></i> Demo</button>
+              <a href="https://github.com/Abdussalam50/Guest-House-Hotel-Management-System-of-Steze" class="px-5 py-2 bg-white text-primary rounded-lg font-bold text-sm"><i class="fab fa-github"></i> Code</a>
+            </div>
+          </div>
+          <div class="p-8">
+            <span class="text-[10px] font-black uppercase tracking-widest text-accent mb-2 block">Full Stack</span>
+            <h3 class="text-xl font-bold text-white mb-3">Guest House & Hotel Management System for Steze <span class="text-yellow-400"></span></h3>
+            <p class="text-sm text-gray-400 mb-6">A hotel & guest house operations management app with 4 user levels (super admin, admin, operational
+admin, customer service). Features include real-time room monitoring & management via Fetch API, an
+automatic room availability validation system to prevent booking conflicts, transaction & operational
+reports with visitor trend charts, and a responsive, user-friendly interface.</p>
+            <div class="flex flex-wrap gap-2">
+              <span class="px-2 py-1 bg-white/5 rounded text-[10px] text-gray-400">PHP Native</span>
+              <span class="px-2 py-1 bg-white/5 rounded text-[10px] text-gray-400">JavaScript</span>
+              <span class="px-2 py-1 bg-white/5 rounded text-[10px] text-gray-400">Bootstrap</span>
+              <span class="px-2 py-1 bg-white/5 rounded text-[10px] text-gray-400">MySQL</span>
+            </div>
+          </div>
+        </div>
+        <!-- Project Card 6 -->
+        <div class="group glass-card !p-0 overflow-hidden reveal" data-category="fullstack">
+          <div class="relative h-56 overflow-hidden">
+            <div class="w-full h-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center text-6xl text-white/50"><i class="fas fa-shopping-cart"></i></div>
+            <div class="absolute inset-0 bg-primary/90 flex items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition-all duration-300">
+              <button data-video="https://www.youtube.com/embed/w5EAlSYwNb4?si=SLqqKbIwlIW7YSZx" class="demo-btn px-5 py-2 bg-white text-primary rounded-lg font-bold text-sm hover:bg-primary hover:text-white transition-all"><i class="fas fa-play-circle"></i> Demo</button>
+              <a href="https://github.com/Abdussalam50/Fish-Dryer-Management" class="px-5 py-2 bg-white text-primary rounded-lg font-bold text-sm"><i class="fab fa-github"></i> Code</a>
+            </div>
+          </div>
+          <div class="p-8">
+            <span class="text-[10px] font-black uppercase tracking-widest text-accent mb-2 block">Full Stack</span>
+            <h3 class="text-xl font-bold text-white mb-3">Fish Dryer Enviroment Management System <span class="text-yellow-400"></span></h3>
+            <p class="text-sm text-gray-400 mb-6">
+              This web apps is use to manage fish dryer environment for produce better quality dry fish . 
+              I use PHP native, Vanilla JavaScript to build backend logic and front end side. 
+              then I also build REST API to connect the IOT devices to web apps to control air humidity, temperature, and light intensity.</p>
+            <div class="flex flex-wrap gap-2">
+              <span class="px-2 py-1 bg-white/5 rounded text-[10px] text-gray-400">PHP Native</span>
+              <span class="px-2 py-1 bg-white/5 rounded text-[10px] text-gray-400">JavaScript</span>
+              <span class="px-2 py-1 bg-white/5 rounded text-[10px] text-gray-400">Bootstrap</span>
+              <span class="px-2 py-1 bg-white/5 rounded text-[10px] text-gray-400">MySQL</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="group glass-card !p-0 overflow-hidden reveal" data-category="fullstack">
+          <div class="relative h-56 overflow-hidden">
+            <div class="w-full h-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center text-6xl text-white/50"><i class="fas fa-shopping-cart"></i></div>
+            <div class="absolute inset-0 bg-primary/90 flex items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition-all duration-300">
+              <button data-video="https://www.youtube.com/embed/dQw4w9WgXcQ" class="demo-btn px-5 py-2 bg-white text-primary rounded-lg font-bold text-sm hover:bg-primary hover:text-white transition-all"><i class="fas fa-play-circle"></i> Demo</button>
+              <a href="https://github.com/Abdussalam50/Health-Diagnose-System" class="px-5 py-2 bg-white text-primary rounded-lg font-bold text-sm"><i class="fab fa-github"></i> Code</a>
+            </div>
+          </div>
+          <div class="p-8">
+            <span class="text-[10px] font-black uppercase tracking-widest text-accent mb-2 block">Full Stack</span>
+            <h3 class="text-xl font-bold text-white mb-3">Health Diagnose System<span class="text-yellow-400"></span></h3>
+            <p class="text-sm text-gray-400 mb-6">
+              it's used to diagnose health condition based on blood pressure, heart beat, and body temperature. 
+              I use PHP native and Vanila JavaScript to build front end and backend then I also build REST API to connect IOT device such as sensors and microcontroller.</p>
+            <div class="flex flex-wrap gap-2">
+              <span class="px-2 py-1 bg-white/5 rounded text-[10px] text-gray-400">PHP Native</span>
+              <span class="px-2 py-1 bg-white/5 rounded text-[10px] text-gray-400">JavaScript</span>
+              <span class="px-2 py-1 bg-white/5 rounded text-[10px] text-gray-400">Bootstrap</span>
+              <span class="px-2 py-1 bg-white/5 rounded text-[10px] text-gray-400">MySQL</span>
+              <span class="px-2 py-1 bg-white/5 rounded text-[10px] text-gray-400">REST API</span>
+            </div>
+          </div>
+        </div>
+        <div class="group glass-card !p-0 overflow-hidden reveal" data-category="fullstack">
+          <div class="relative h-56 overflow-hidden">
+            <div class="w-full h-full bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center text-6xl text-white/50"><i class="fas fa-shopping-cart"></i></div>
+            <div class="absolute inset-0 bg-primary/90 flex items-center justify-center gap-4 opacity-0 group-hover:opacity-100 transition-all duration-300">
+              <button data-video="https://www.youtube.com/embed/dQw4w9WgXcQ" class="demo-btn px-5 py-2 bg-white text-primary rounded-lg font-bold text-sm hover:bg-primary hover:text-white transition-all"><i class="fas fa-play-circle"></i> Demo</button>
+              <a href="https://github.com/Abdussalam50/Let-s-Make-It" class="px-5 py-2 bg-white text-primary rounded-lg font-bold text-sm"><i class="fab fa-github"></i> Code</a>
+            </div>
+          </div>
+          <div class="p-8">
+            <span class="text-[10px] font-black uppercase tracking-widest text-accent mb-2 block">Full Stack</span>
+            <h3 class="text-xl font-bold text-white mb-3">Let's Make It Gym Web Apps<span class="text-yellow-400"></span></h3>
+            <p class="text-sm text-gray-400 mb-6">
+              A web-based weightlifting management application designed to help users manage their training programs based on their skill levels and personal goals. 
+              This project focuses on personalizing the user experience through a quiz system and progress tracking.</p>
+            <div class="flex flex-wrap gap-2">
+              <span class="px-2 py-1 bg-white/5 rounded text-[10px] text-gray-400">PHP Native</span>
+              <span class="px-2 py-1 bg-white/5 rounded text-[10px] text-gray-400">JavaScript</span>
+              <span class="px-2 py-1 bg-white/5 rounded text-[10px] text-gray-400">Bootstrap</span>
+              <span class="px-2 py-1 bg-white/5 rounded text-[10px] text-gray-400">MySQL</span>
+              <span class="px-2 py-1 bg-white/5 rounded text-[10px] text-gray-400">Sweet Alert</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-24 bg-white/[0.01]" id="experience">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center mb-16">
+        <span class="inline-block px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-primary text-sm font-semibold mb-4">My Journey</span>
+        <h2 class="text-4xl md:text-5xl font-black text-white">Experience & Education</h2>
+      </div>
+      <div class="max-w-3xl mx-auto relative before:absolute before:left-5 md:before:left-1/2 before:top-0 before:w-0.5 before:h-full before:bg-white/5 before:-translate-x-1/2">
+        <!-- Item 1 -->
+        <div class="relative mb-16 reveal">
+          <div class="absolute left-5 md:left-1/2 w-4 h-4 bg-dark border-4 border-primary rounded-full -translate-x-1/2 z-10"></div>
+          <div class="ml-16 md:ml-0 md:w-[45%] md:text-right">
+            <div class="glass-card !p-6 inline-block md:block text-left">
+              <span class="inline-flex px-3 py-1 bg-primary/10 text-primary text-[10px] font-black uppercase rounded-full mb-3 gap-2 items-center"><i class="fas fa-briefcase"></i> Work</span>
+              <h3 class="text-lg font-bold text-white">Full Stack Developer</h3>
+              <p class="text-primary text-sm font-bold mb-2">PT Ridikc Industries</p>
+              <p class="text-gray-500 text-xs mb-4"><i class="far fa-calendar-alt mr-1"></i> Des 2024 — Des 2025</p>
+              <ul class="text-xs text-gray-400 space-y-2 list-disc list-inside">
+                <li>Developed web apps using PHP Native, JavaScript, MYSQL, Bootstrap, and Tailwind</li>
+                <li>Build secure REST API to connect IOT devices and Mobile App</li>
+                <li>Deploy App to production server and create documentations</li>
+                <li>Maintenance and optimize existing features</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="relative mb-16 reveal">
+          <div class="absolute left-5 md:left-1/2 w-4 h-4 bg-dark border-4 border-primary rounded-full -translate-x-1/2 z-10"></div>
+          <div class="ml-16 md:ml-auto md:w-[45%]">
+            <div class="glass-card !p-6 text-left">
+              <span class="inline-flex px-3 py-1 bg-primary/10 text-primary text-[10px] font-black uppercase rounded-full mb-3 gap-2 items-center"><i class="fas fa-briefcase"></i> Work</span>
+              <h3 class="text-lg font-bold text-white">Full Stack Developer</h3>
+              <p class="text-primary text-sm font-bold mb-2">Freelance</p>
+              <p class="text-gray-500 text-xs mb-4"><i class="far fa-calendar-alt mr-1"></i> Jan 2026 — Present</p>
+              <ul class="text-xs text-gray-400 space-y-2 list-disc list-inside">
+                <li>Developed web apps using Laravel, React, MYSQL, Postgree SQL,TailwindCSS, Python, And Docker</li>
+                <li>Maintenance and optimize existing features</li>
+                <li>Deploy App to production server and create documentations</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <!-- Item 2 -->
+        <div class="relative reveal">
+          <div class="absolute left-5 md:left-1/2 w-4 h-4 bg-dark border-4 border-secondary rounded-full -translate-x-1/2 z-10"></div>
+          <div class="ml-16 md:ml-0 md:w-[45%] md:text-right">
+            <div class="glass-card !p-6 inline-block md:block text-left">
+              <span class="inline-flex px-3 py-1 bg-secondary/10 text-secondary text-[10px] font-black uppercase rounded-full mb-3 gap-2 items-center"><i class="fas fa-graduation-cap"></i> Education</span>
+              <h3 class="text-lg font-bold text-white">Physics Education</h3>
+              <p class="text-secondary text-sm font-bold mb-2">Jambi University</p>
+              <p class="text-gray-500 text-xs mb-4"><i class="far fa-calendar-alt mr-1"></i>Aug 2020 — Jan 2025</p>
+              <ul class="text-xs text-gray-400 space-y-2 list-disc list-inside">
+                <li>Physics Education</li>
+                <li>Software engineering focus</li>
+                <li>Teaching learning method</li>
+                <li>Modern Physics</li>
+                <li>Classical Mechanics</li>
+                <li>Electromagnetics</li>
+                <li>Basic Electricity and Electronics</li>
+                <li>Quantum Physics</li>
+                <li>Thermodynamics</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-24" id="contact">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="text-center mb-16">
+        <span class="inline-block px-4 py-1.5 bg-white/5 border border-white/10 rounded-full text-primary text-sm font-semibold mb-4">Contact</span>
+        <h2 class="text-4xl md:text-5xl font-black text-white">Let's Work Together</h2>
+        <p class="text-gray-400 mt-4">Have a project in mind? I'd love to hear about it.</p>
+      </div>
+      <div class="grid grid-cols-1 lg:grid-cols-[0.8fr_1.2fr] gap-16">
+        <div class="reveal space-y-8">
+          <div class="flex gap-6">
+            <div class="w-14 h-14 bg-white/5 border border-white/5 rounded-2xl flex items-center justify-center text-2xl text-primary shrink-0"><i class="fas fa-envelope"></i></div>
+            <div><h4 class="font-bold text-white">Email</h4><p class="text-gray-400 text-sm">abdussalamhadist50gmail.com</p></div>
+          </div>
+          <div class="flex gap-6">
+            <div class="w-14 h-14 bg-white/5 border border-white/5 rounded-2xl flex items-center justify-center text-2xl text-primary shrink-0"><i class="fas fa-map-marker-alt"></i></div>
+            <div><h4 class="font-bold text-white">Location</h4><p class="text-gray-400 text-sm">Indonesia</p></div>
+          </div>
+          <div class="flex gap-6">
+            <div class="w-14 h-14 bg-white/5 border border-white/5 rounded-2xl flex items-center justify-center text-2xl text-primary shrink-0"><i class="fas fa-clock"></i></div>
+            <div><h4 class="font-bold text-white">Availability</h4><p class="text-gray-400 text-sm">Mon–Fri, 9AM–6PM WIB</p></div>
+          </div>
+          <div class="flex gap-4 pt-6">
+            <a href="https://github.com/Abdussalam50?tab=repositories" target="_blank"class="w-12 h-12 flex items-center justify-center bg-white/5 border border-white/5 rounded-xl text-xl hover:bg-primary transition-all"><i class="fab fa-github"></i></a>
+            <a href="https://www.linkedin.com/in/abdussalam-hadist-02067b287/" target="_blank" class="w-12 h-12 flex items-center justify-center bg-white/5 border border-white/5 rounded-xl text-xl hover:bg-primary transition-all"><i class="fab fa-linkedin"></i></a>
+            <a href="https://wa.me/6282282169581?text=Halo%20Aswin,%20saya%20tertarik%20dengan%20portofolio%20Anda" target="_blank" class="w-12 h-12 flex items-center justify-center bg-white/5 border border-white/5 rounded-xl text-xl hover:bg-primary transition-all"><i class="fab fa-whatsapp"></i></a>
+          </div>
+        </div>
+        <form class="glass-card reveal" action="https://api.web3forms.com/submit" id="contactForm">
+          <!-- Web3Forms Access Key - Get yours at web3forms.com -->
+          <input type="hidden" name="access_key" value="0271fe06-03ee-45a5-b542-85c6a7ffd605">
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
+            <div class="space-y-2">
+              <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Name</label>
+              <input type="text" name="name" placeholder="John Doe" class="w-full bg-dark border border-white/10 rounded-xl p-4 focus:outline-none focus:border-primary transition-all" required />
+            </div>
+            <div class="space-y-2">
+              <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Email</label>
+              <input type="email" name="email" placeholder="john@example.com" class="w-full bg-dark border border-white/10 rounded-xl p-4 focus:outline-none focus:border-primary transition-all" required />
+            </div>
+          </div>
+          <div class="space-y-2 mb-6">
+            <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Subject</label>
+            <input type="text" name="subject" placeholder="Project Discussion" class="w-full bg-dark border border-white/10 rounded-xl p-4 focus:outline-none focus:border-primary transition-all" />
+          </div>
+          <div class="space-y-2 mb-8">
+            <label class="text-xs font-bold text-gray-400 uppercase tracking-widest">Message</label>
+            <textarea name="message" rows="5" placeholder="Tell me about your project..." class="w-full bg-dark border border-white/10 rounded-xl p-4 focus:outline-none focus:border-primary transition-all" required></textarea>
+          </div>
+          <button type="submit" class="btn-primary w-full justify-center py-4" id="sendBtn">
+            <i class="fas fa-paper-plane"></i> Send Message
+          </button>
+          <div id="formSuccess" class="hidden mt-6 p-4 bg-green-500/10 border border-green-500/20 text-green-400 rounded-xl text-center flex items-center justify-center gap-2">
+            <i class="fas fa-check-circle"></i> Message sent! I'll get back to you soon.
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <footer class="py-12 border-t border-white/5 text-center">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="font-fira text-3xl font-black mb-6">&lt;<span class="text-primary">Abdusssalam Aswin Hadist</span> /&gt;</div>
+      <p class="text-gray-500 text-sm">Built with <span class="text-accent animate-pulse inline-block">❤️</span> using Tailwind CSS</p>
+      <p class="text-gray-600 text-[10px] mt-4 font-bold uppercase tracking-widest">© 2026 AWH · All rights reserved.</p>
+    </div>
+  </footer>
+
+  <button id="backToTop" class="fixed bottom-8 right-8 w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center shadow-lg shadow-primary/40 opacity-0 invisible translate-y-4 hover:-translate-y-1 transition-all z-[999] [&.show]:opacity-100 [&.show]:visible [&.show]:translate-y-0">
+    <i class="fas fa-chevron-up"></i>
+  </button>
+
+  <!-- Video Modal -->
+  <div id="videoModal">
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+      <button class="close-modal"><i class="fas fa-times"></i></button>
+      <div id="videoContainer" class="w-full h-full">
+        <!-- Video iframe or element will be injected here -->
+      </div>
+    </div>
+  </div>
+  <!-- CV Modal -->
+  <div id="cvModal">
+    <div class="modal-overlay"></div>
+    <div class="modal-content">
+      <button class="close-cv-modal absolute top-4 right-4 text-gray-400 hover:text-white transition-colors text-2xl"><i class="fas fa-times"></i></button>
+      <div class="text-center mb-8">
+        <div class="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center text-3xl text-primary mx-auto mb-4">
+          <i class="fas fa-file-pdf"></i>
+        </div>
+        <h3 class="text-2xl font-bold text-white mb-2">Pilih Versi CV</h3>
+        <p class="text-gray-400 text-sm">Silakan pilih bahasa untuk kurikulum vitae Anda.</p>
+      </div>
+      <div class="grid gap-4">
+        <a href="assets/CV_Abdussalam_Aswin_Had.pdf" download class="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-xl hover:bg-primary/20 hover:border-primary transition-all group text-left">
+          <div class="flex items-center gap-4">
+            <span class="text-2xl">🇮🇩</span>
+            <div>
+              <div class="font-bold text-white">Bahasa Indonesia</div>
+              <div class="text-[10px] text-gray-500 uppercase tracking-widest font-black">Versi Standar</div>
+            </div>
+          </div>
+          <i class="fas fa-download text-gray-500 group-hover:text-primary transition-colors"></i>
+        </a>
+        <a href="assets/CV_Abdussalam_English.pdf" download class="flex items-center justify-between p-4 bg-white/5 border border-white/10 rounded-xl hover:bg-primary/20 hover:border-primary transition-all group text-left">
+          <div class="flex items-center gap-4">
+            <span class="text-2xl">🇬🇧</span>
+            <div>
+              <div class="font-bold text-white">English Version</div>
+              <div class="text-[10px] text-gray-500 uppercase tracking-widest font-black">International Format</div>
+            </div>
+          </div>
+          <i class="fas fa-download text-gray-500 group-hover:text-primary transition-colors"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
