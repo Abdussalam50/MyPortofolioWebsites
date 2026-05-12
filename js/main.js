@@ -330,12 +330,23 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.addEventListener('click', () => {
                 const videoUrl = btn.getAttribute('data-video');
                 
-                // Check if it's a YouTube link or local file
+                // Check if it's a YouTube link, Google Drive link, or local file
                 let content = '';
                 if (videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be')) {
                     const embedUrl = getYouTubeEmbedUrl(videoUrl);
                     const separator = embedUrl.includes('?') ? '&' : '?';
                     content = `<iframe class="w-full h-full" src="${embedUrl}${separator}autoplay=1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+                } else if (videoUrl.includes('drive.google.com')) {
+                    let fileId = '';
+                    const match = videoUrl.match(/\/d\/(.+?)\//);
+                    if (match && match[1]) {
+                        fileId = match[1];
+                    }
+                    if (fileId) {
+                        content = `<iframe class="w-full h-full" src="https://drive.google.com/file/d/${fileId}/preview" frameborder="0" allowfullscreen></iframe>`;
+                    } else {
+                        content = `<iframe class="w-full h-full" src="${videoUrl}" frameborder="0" allowfullscreen></iframe>`;
+                    }
                 } else {
                     content = `<video class="w-full h-full" controls autoplay><source src="${videoUrl}" type="video/mp4">Your browser does not support the video tag.</video>`;
                 }
